@@ -5,9 +5,9 @@ const {handleError} = require('./helpers/errorHandler')
 const app = express()
 const cors = require('cors')
 const port = 3000
-const {DB_PATH, DB_NAME} = process.env;
+const {DB_PATH, DB_NAME, DB_FULLPATH} = process.env;
 
-mongoose.connect(`mongodb://${DB_PATH}/${DB_NAME}`, {
+mongoose.connect(`${DB_FULLPATH}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 }, (err) => {
