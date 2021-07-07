@@ -27,6 +27,6 @@ app.use('/', routes);
 
 app.use(ErrorHandler);
 
-app.listen(port, () => {
+app.listen(process.env.PORT, () => {
     console.info(`listening on port ${port}`)
 });
