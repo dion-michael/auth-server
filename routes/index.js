@@ -54,7 +54,7 @@ router.get('/google/callback', passport.authenticate('google', {
                 email: newUser.email,
             }
         }
-        return res.redirect(`http://localhost:3000/login?payload=${JSON.stringify(payload)}`);
+        return res.redirect(`${process.env.REACT_APP_URL}/login?payload=${JSON.stringify(payload)}`);
     } catch (error) {
         next(error)
     }
