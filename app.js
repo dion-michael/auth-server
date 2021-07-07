@@ -5,7 +5,7 @@ const { ErrorHandler } = require('./middlewares/ErrorHandler');
 const routes = require('./routes');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 
 app.use(cors());
 app.use(express.json());
@@ -27,6 +27,6 @@ app.use('/', routes);
 
 app.use(ErrorHandler);
 
-app.listen(process.env.PORT, () => {
+app.listen(port, () => {
     console.info(`listening on port ${port}`)
 });

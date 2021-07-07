@@ -17,6 +17,9 @@ module.exports = async function (req, res, next) {
             }
         }
     } catch (error) {
+        if (error.name === 'JsonWebTokenError') {
+            next(new CustomError(401, 'unauthorized'));
+        }
         next(error)
     }
 }

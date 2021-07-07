@@ -6,22 +6,9 @@ const userRoutes = require('./users');
 const User = require('../models/User');
 const { excludedValue } = require('../configs');
 const excludeSensitiveData = require('../helpers/excludeSensitiveData');
+const UserController = require('../controllers/userController');
 
-router.post('/register', async (req, res, next) => {
-    try {
-        const { username, email, password } = req.body;
-        const newUser = new User({
-            username,
-            email,
-            password,
-        });
-        const saved = await newUser.save();
-        const safeData = excludeSensitiveData(saved.toJSON(), excludedValue);
-        return res.json(safeData);
-    } catch (error) {
-        next(error)
-    }
-});
+router.post('/register', UserController.createUser);
 
 router.post('/login', async (req, res, next) => {
     try {
