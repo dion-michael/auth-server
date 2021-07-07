@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 const excludeSensitiveData = require('../helpers/excludeSensitiveData');
 const { excludedValue } = require('../configs');
 const Authorize = require('../middlewares/Authorize');
+const productRoutes = require('./products');
 
 router.post('/register', UserController.createUser);
 
@@ -65,6 +66,8 @@ router.get('/login/google/failed', (req, res, next) => {
 });
 
 router.use('/users', userRoutes);
+
+router.use('/products', productRoutes)
 
 router.get('/', (_, res) => {
     return res.json({ healthcheck: 'OK' });
