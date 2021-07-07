@@ -11,6 +11,7 @@ module.exports = async function (req, res, next) {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             const user = await User.findOne({username: decoded.username});
             if (user) {
+                req.user = decoded;
                 next()
             } else {
                 throw new CustomError(404, 'user not found')

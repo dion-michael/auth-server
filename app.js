@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const { ErrorHandler } = require('./middlewares/ErrorHandler');
 const routes = require('./routes');
+const passport = require('passport');
 
 const app = express();
 const port = process.env.PORT;
@@ -22,7 +23,9 @@ app.use(express.urlencoded({
 */
 
 require('./configs/db');
+require('./configs/passport');
 
+app.use(passport.initialize())
 app.use('/', routes);
 
 app.use(ErrorHandler);

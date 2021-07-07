@@ -4,6 +4,7 @@ const { excludedValue } = require('../configs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { CustomError } = require('../middlewares/ErrorHandler');
+const userDao = require('../data_access/userDao');
 
 class UserController{
     static getAll = async (req, res, next) => {
@@ -55,6 +56,18 @@ class UserController{
                 }
             }
             throw new CustomError(404, 'user not found');
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    static loginToken = async (req, res, next) => {
+        try {
+            if (req.user) {
+                res.json({ user: req.user });
+            } else {
+                throw new CustomError(400, 'unauthorized');
+            }
         } catch (error) {
             next(error)
         }
