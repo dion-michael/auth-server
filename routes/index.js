@@ -10,31 +10,7 @@ const UserController = require('../controllers/userController');
 
 router.post('/register', UserController.createUser);
 
-router.post('/login', async (req, res, next) => {
-    try {
-        const { username, password } = req.body;
-        if (!username) throw new CustomError(400, 'username required');
-        if (!password) throw new CustomError(400, 'password required');
-        const user = await User.findOne({username});
-        if (user) {
-            const isValid = bcrypt.compareSync(password, user.password);
-            if (isValid) {
-                const token = jwt.sign(excludeSensitiveData(user.toJSON(), excludedValue), process.env.JWT_SECRET);
-                return res.json({
-                    token,
-                    username,
-                    avatar: user.avatar,
-                    email: user.email,
-                })
-            } else {
-                throw new CustomError(400, 'wrong username / password')
-            }
-        }
-        throw new CustomError(404, 'user not found');
-    } catch (error) {
-        next(error)
-    }
-});
+router.post('/login', UserController.login);
 
 router.use('/users', userRoutes);
 
