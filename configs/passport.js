@@ -7,7 +7,7 @@ passport.use(new GoogleStrategy(
     {
         clientID: GOOGLE_CLIENT_ID,
         clientSecret: GOOGLE_CLIENT_SECRET,
-        callbackURL: '/google/callback',
+        callbackURL: 'https://auth-example1.herokuapp.com/google/callback',
         passReqToCallback: true,
     },
     async function (req, accessToken, refreshToken, profile, done) {
