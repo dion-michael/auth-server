@@ -1,32 +1,32 @@
-require('dotenv').config()
-const express = require('express')
-const mongoose = require('mongoose')
-const {handleError} = require('./helpers/errorHandler')
-const app = express()
-const cors = require('cors')
-const port = 3000
-const {DB_PATH, DB_NAME, DB_FULLPATH} = process.env;
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const { ErrorHandler } = require('./middlewares/ErrorHandler');
+const routes = require('./routes');
 
-mongoose.connect(`${DB_FULLPATH}`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-}, (err) => {
-    if (err) {
-        console.log(err);
-    } else {
-        console.log('connection successful');
-    }
-})
+const app = express();
+const port = 3000;
 
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 app.use(express.urlencoded({
     extended: false
-}))
+}));
 
-app.use('/', require('./routes'))
+/*
+    ROUTES
+    - HEALTHCHECK: '/'
+    - GET USERS: '/users'
+    - REGISTER: '/register'
+    - LOGIN: '/login'
+*/
 
-app.use(handleError)
+require('./configs/db');
+
+app.use('/', routes);
+
+app.use(ErrorHandler);
+
 app.listen(port, () => {
-    console.log(`listening on port ${port}`)
-})
+    console.info(`listening on port ${port}`)
+});
