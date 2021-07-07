@@ -1,11 +1,6 @@
 const router = require('express').Router();
 
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const userRoutes = require('./users');
-const User = require('../models/User');
-const { excludedValue } = require('../configs');
-const excludeSensitiveData = require('../helpers/excludeSensitiveData');
 const UserController = require('../controllers/userController');
 
 router.post('/register', UserController.createUser);
