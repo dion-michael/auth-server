@@ -11,6 +11,10 @@ const excludeSensitiveData = require('../helpers/excludeSensitiveData');
 const { excludedValue } = require('../configs');
 const Authorize = require('../middlewares/Authorize');
 const productRoutes = require('./products');
+const { OAuth2Client } = require('google-auth-library');
+const userDAO = require('../data_access/userDao');
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 router.post('/register', UserController.createUser);
 
@@ -19,6 +23,50 @@ router.post('/login', UserController.login);
 router.post('/login/token', Authorize, UserController.loginToken);
 
 router.get('/login/google', passport.authenticate('google', { scope: ['email', 'profile'] }))
+
+router.post('/auth/google', async (req, res, next) => {
+    const { token } = req.body;
+    try {
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        console.log(`ticket`, ticket)
+        const { name, email, picture } = ticket.getPayload();
+        const user = await userDAO.findOne({ email });
+        let payload = {};
+        if (user) {
+            if (!user.avatar) {
+                await User.findOneAndUpdate({email}, {avatar: picture})
+            };
+            const token = jwt.sign(excludeSensitiveData(user, excludedValue), process.env.JWT_SECRET);
+            payload = {
+                token,
+                username: user.username,
+                avatar: user.avatar,
+                email: user.email,
+            }
+        } else {
+            const newUser = new User({
+                username: name,
+                password: 'defaultpassword',
+                email: email,
+                avatar: picture,
+            });
+            await newUser.save();
+            const token = jwt.sign(excludeSensitiveData(newUser.toJSON(), excludedValue), process.env.JWT_SECRET);
+            payload = {
+                token,
+                username: newUser.username,
+                avatar: newUser.avatar,
+                email: newUser.email,
+            } 
+        }
+        return res.json(payload)
+    } catch (error) {
+        next(error);
+    }
+})
 
 router.get('/google/callback', passport.authenticate('google', {
     failureRedirect: '/login/google/failed',
